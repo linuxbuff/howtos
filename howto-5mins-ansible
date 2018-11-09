@@ -1,0 +1,22 @@
+## linuxbuff ansible super-quick setup 
+## https://linuxbuff.wordpress.com/2017/07/27/ansible-quick-start-in-5-minutes-or-less/
+## copy and paste into a root shell/putty
+# install software
+yum install -y ansible
+# add user
+useradd ansible
+# set password
+echo redhat | passwd --stdin ansible
+# configure ansible hosts/inventory file
+echo -e "[local]\nlocalhost" > /etc/ansible/hosts
+# configure sudo
+echo "ansible    ALL=(ALL)       NOPASSWD: ALL" > /etc/sudoers.d/ansible
+# configure ssh keys
+su - ansible -c " cat /dev/zero | ssh-keygen -q -N '' "
+su - ansible -c "ssh-keyscan -H localhost > ~/.ssh/known_hosts"
+cp /home/ansible/.ssh/id_rsa.pub /home/ansible/.ssh/authorized_keys
+chmod 600 /home/ansible/.ssh/authorized_keys
+chown ansible:ansible /home/ansible/.ssh/authorized_keys
+# test
+su - ansible -c " ansible all -m ping "
+## all finished
