@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Title: LinuxBuff IdM/IPA API Sample Script
+# Date: 06/03/2020
+# This script logs into IdM and then finds all the groups
+# This can be modified by changing the curl command payload
+
+export COOKIEJAR=/tmp/cookies
+export ADMINPWD="LinuxBuff123."
+export IDMSERVER="idm.blue.example.net"
+export PAYLOAD='{"method":"group_find/1","params":[[""],{}],"id":0}'
+
+echo "Logging into IdM"
+curl -k \
+-H "Referer:https://${IDMSERVER}/ipa" \
+-H "Content-Type:application/x-www-form-urlencoded" \
+-H "Accept:text/plain" \
+-X POST \
+-d "user=admin&password=${ADMINPWD}" \
+-c $COOKIEJAR -b $COOKIEJAR \
+https://${IDMSERVER}/ipa/session/login_password
+
+
+echo "List all the groups"
+curl -k \
+-H "Referer:https://${IDMSERVER}/ipa" \
+-H "Content-Type:application/json" \
+-H "Accept:text/json" \
+-X POST \
+-d "${PAYLOAD}" \
+-c $COOKIEJAR -b $COOKIEJAR \
+https://${IDMSERVER}/ipa/session/json
